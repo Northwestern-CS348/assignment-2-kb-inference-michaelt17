@@ -195,33 +195,3 @@ class InferenceEngine(object):
                     rule.supports_rules.append(new_rule)
                     # print("adding rule in false")
                     kb.kb_add(new_rule)
-
-        # if new_bindings != False:
-        #     if len(rule.lhs) == 1:
-        #         new_statement = instantiate(rule_rhs,new_bindings)
-        #         new_fact = Fact(new_statement,[fact,rule])
-        #         if new_fact not in kb.facts:
-        #             # fact.supports_facts.append(new_fact)
-        #             # rule.supports_facts.append(new_fact)
-        #             # new_fact.supported_by.append(rule)
-        #             # new_fact.supported_by.append(fact)
-        #             kb.kb_add(new_fact)
-        #     else:
-        #         # print("booo")
-        #         new_statement = instantiate(leftHandSide,new_bindings)
-        #         print("looking at statements and bindings")
-        #         print(new_statement)
-        #         for factInKB in kb.facts:
-        #             print("kb statement: " + str(factInKB.statement))
-        #             if new_statement == factInKB.statement:
-        #                 print("Statements are the same")
-        #                 new_rules_array = []
-        #                 for oldRule in rule.lhs[1:]:
-        #                     new_rules_array.append(instantiate(oldRule,new_bindings))
-        #                 new_rule = Rule([new_rules_array,[instantiate(rule_rhs,new_bindings)]],[fact,rule])
-        #                 if new_rule not in kb.rules:
-        #                     # fact.supports_rules.append(new_rule)
-        #                     # rule.supports_rules.append(new_rule)
-        #                     # new_rule.supported_by.append(rule)
-        #                     # new_rule.supported_by.append(fact)
-        #                     kb.kb_add(new_rule)
