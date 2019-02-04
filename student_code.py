@@ -129,6 +129,58 @@ class KnowledgeBase(object):
         ####################################################
         # Student code goes here
 
+        # for f in self.facts:
+        #     if f.statement == fact_or_rule
+
+        if fact_or_rule in self.facts:
+            new_fact_or_rule = self.facts[self.facts.index(fact_or_rule)]
+        else:
+            return
+
+        if factq(new_fact_or_rule):
+            if new_fact_or_rule.asserted == True:
+                print("this fact was asserted")
+                print(len(fact_or_rule.supported_by))
+                print(len(fact_or_rule.supports_facts))
+                print(len(fact_or_rule.supports_rules))
+
+                if len(fact_or_rule.supported_by) == 0:
+                    for supportedFact in new_fact_or_rule.supports_facts:
+                        for pair in supportedFact.supported_by:
+                            if pair[0] == new_fact_or_rule:
+                                supportedFact.supported_by.remove(pair)
+                                self.kb_retract(supportedFact)
+                    for supportedRule in new_fact_or_rule.supports_rules:
+                        for pair in supportedRule.supported_by:
+                            if pair[0] == new_fact_or_rule:
+                                supportedRule.supported_by.remove(pair)
+                                self.kb_retract(supportedRule)
+                    self.facts.remove(new_fact_or_rule)
+                else:
+                    fact_or_rule.asserted == False
+            else:
+                print("this fact was not asserted")
+                if len(new_fact_or_rule.supported_by) == 0:
+                    print("boo suckers")
+                    for supportedFact2 in new_fact_or_rule.supports_facts:
+                        for pair in supportedFact2.supported_by:
+                            if pair[0] == new_fact_or_rule:
+                                supportedFact2.supported_by.remove(pair)
+                                self.kb_retract(supportedFact2)
+                    for supportedRule2 in new_fact_or_rule.supports_rules:
+                        for pair in supportedRule2.supported_by:
+                            if pair[0] == new_fact_or_rule:
+                                supportedRule2.supported_by.remove(pair)
+                                self.kb_retract(supportedRule2)
+                    self.facts.remove(new_fact_or_rule)
+                else:
+                    print("haha suckers")
+        else:
+            if fact_or_rule.asserted == True:
+                print("this rule was asserted")
+            else:
+                print("this rule was not asserted")
+
 
 class InferenceEngine(object):
     def fc_infer(self, fact, rule, kb):
@@ -160,14 +212,15 @@ class InferenceEngine(object):
         # If a rule has already been created with the constants
         if new_bindings == []:
             if len(rule.lhs) == 1:
-                new_fact = Fact(rule_rhs,[fact,rule])
+                new_fact = Fact(rule_rhs,[(fact,rule)])
                 if new_fact not in kb.facts:
                     fact.supports_facts.append(new_fact)
                     rule.supports_facts.append(new_fact)
+                    # print(new_fact.statement)
                     # print("adding fact in []")
                     kb.kb_add(new_fact)
             else:
-                new_rule = Rule([rule.lhs[1:],rule_rhs],[fact,rule])
+                new_rule = Rule([rule.lhs[1:],rule_rhs],[(fact,rule)])
                 if new_rule not in kb.rules:
                     fact.supports_rules.append(new_rule)
                     rule.supports_rules.append(new_rule)
@@ -178,20 +231,23 @@ class InferenceEngine(object):
         elif new_bindings !=  False:
             if len(rule.lhs) == 1:
                 new_statement = instantiate(rule_rhs,new_bindings)
-                new_fact = Fact(new_statement,[fact,rule])
+                new_fact = Fact(new_statement,[(fact,rule)])
                 if new_fact not in kb.facts:
                     fact.supports_facts.append(new_fact)
                     rule.supports_facts.append(new_fact)
-                    # print("adding fact in false")
+                    # print(new_fact.statement)
+                    # print("adding fact in not false")
                     kb.kb_add(new_fact)
             else:
                 newRulesArray = []
                 for oldRule in rule.lhs[1:]:
                     # print(instantiate(oldRule,new_bindings))
                     newRulesArray.append(instantiate(oldRule,new_bindings))
-                new_rule = Rule([newRulesArray,instantiate(rule_rhs,new_bindings)],[fact,rule])
+                new_rule = Rule([newRulesArray,instantiate(rule_rhs,new_bindings)],[(fact,rule)])
                 if new_rule not in kb.rules:
                     fact.supports_rules.append(new_rule)
                     rule.supports_rules.append(new_rule)
-                    # print("adding rule in false")
+                    # print("adding rule in not false")
                     kb.kb_add(new_rule)
+        # else:
+        #     print("nothing cooking")

@@ -1,0 +1,6 @@
+fact: (motherof ada bing)
+fact: (motherof bing chen)
+fact: (grandmotherof ada felix)
+
+rule: ((motherof ?x ?y)) -> (parentof ?x ?y)
+rule: ((parentof ?x ?y) (motherof ?z ?x)) -> (grandmotherof ?z ?y)

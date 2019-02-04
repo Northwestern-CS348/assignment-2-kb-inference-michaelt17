@@ -49,9 +49,18 @@ class KBTest(unittest.TestCase):
     def test3(self):
         # Does retract actually retract things
         r1 = read.parse_input("fact: (motherof ada bing)")
-        print(' Retracting', r1)
+        # for f in self.KB.facts:
+        #     print(f.statement)
+        #     print(f.asserted)
+            # print(f.supported_by)
         self.KB.kb_retract(r1)
         ask1 = read.parse_input("fact: (grandmotherof ada ?X)")
+        # print(len(self.KB.facts))
+        # for f in self.KB.facts:
+        #     print(f.statement)
+        #     print(f.asserted)
+        #     print(len(f.supported_by))
+            # print(f.supported_by)
         print(' Asking if', ask1)
         answer = self.KB.kb_ask(ask1)
         self.assertEqual(len(answer), 1)
@@ -65,9 +74,19 @@ class KBTest(unittest.TestCase):
         self.assertEqual(str(answer[0]), "?X : felix")
         self.assertEqual(str(answer[1]), "?X : chen")
 
+        for f in self.KB.facts:
+            print(f.statement)
+            print(f.asserted)
+            print(len(f.supported_by))
+
         r1 = read.parse_input("fact: (grandmotherof ada chen)")
         print(' Retracting', r1)
         self.KB.kb_retract(r1)
+
+        for f in self.KB.facts:
+            print(f.statement)
+            print(f.asserted)
+            print(len(f.supported_by))
 
         print(' Asking if', ask1)
         answer = self.KB.kb_ask(ask1)
