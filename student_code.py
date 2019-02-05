@@ -131,18 +131,23 @@ class KnowledgeBase(object):
 
         # for f in self.facts:
         #     if f.statement == fact_or_rule
-
-        if fact_or_rule in self.facts:
-            new_fact_or_rule = self.facts[self.facts.index(fact_or_rule)]
-        else:
-            return
+        if factq(fact_or_rule):
+            if fact_or_rule in self.facts:
+                new_fact_or_rule = self.facts[self.facts.index(fact_or_rule)]
+            else:
+                return
+        elif isinstance(fact_or_rule, Rule):
+            if fact_or_rule in self.rules:
+                new_fact_or_rule = self.rules[self.rules.index(fact_or_rule)]
+            else:
+                return
 
         if factq(new_fact_or_rule):
             if new_fact_or_rule.asserted == True:
-                print("this fact was asserted")
-                print(len(fact_or_rule.supported_by))
-                print(len(fact_or_rule.supports_facts))
-                print(len(fact_or_rule.supports_rules))
+                # print("this fact was asserted")
+                # print(len(fact_or_rule.supported_by))
+                # print(len(fact_or_rule.supports_facts))
+                # print(len(fact_or_rule.supports_rules))
 
                 if len(fact_or_rule.supported_by) == 0:
                     for supportedFact in new_fact_or_rule.supports_facts:
@@ -159,9 +164,9 @@ class KnowledgeBase(object):
                 else:
                     fact_or_rule.asserted == False
             else:
-                print("this fact was not asserted")
+                # print("this fact was not asserted")
                 if len(new_fact_or_rule.supported_by) == 0:
-                    print("boo suckers")
+                    # print("boo suckers")
                     for supportedFact2 in new_fact_or_rule.supports_facts:
                         for pair in supportedFact2.supported_by:
                             if pair[0] == new_fact_or_rule:
@@ -176,10 +181,25 @@ class KnowledgeBase(object):
                 else:
                     print("haha suckers")
         else:
-            if fact_or_rule.asserted == True:
+            if new_fact_or_rule.asserted == True:
                 print("this rule was asserted")
             else:
-                print("this rule was not asserted")
+                if len(new_fact_or_rule.supported_by) == 0:
+                    # print("boo suckers")
+                    # print(new_fact_or_rule)
+                    for supportedFact3 in new_fact_or_rule.supports_facts:
+                        for pair in supportedFact3.supported_by:
+                            if pair[1] == new_fact_or_rule:
+                                supportedFact3.supported_by.remove(pair)
+                                self.kb_retract(supportedFact3)
+                    for supportedRule3 in new_fact_or_rule.supports_rules:
+                        for pair in supportedRule3.supported_by:
+                            if pair[1] == new_fact_or_rule:
+                                supportedRule3.supported_by.remove(pair)
+                                self.kb_retract(supportedRule3)
+                    self.rules.remove(new_fact_or_rule)
+                # print("this rule was not asserted")
+
 
 
 class InferenceEngine(object):
