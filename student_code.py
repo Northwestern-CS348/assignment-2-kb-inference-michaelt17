@@ -149,8 +149,9 @@ class KnowledgeBase(object):
                 # print(len(fact_or_rule.supports_facts))
                 # print(len(fact_or_rule.supports_rules))
 
-                if len(fact_or_rule.supported_by) == 0:
+                if len(new_fact_or_rule.supported_by) == 0:
                     for supportedFact in new_fact_or_rule.supports_facts:
+                        # print(supportedFact)
                         for pair in supportedFact.supported_by:
                             if pair[0] == new_fact_or_rule:
                                 supportedFact.supported_by.remove(pair)
@@ -162,7 +163,7 @@ class KnowledgeBase(object):
                                 self.kb_retract(supportedRule)
                     self.facts.remove(new_fact_or_rule)
                 else:
-                    fact_or_rule.asserted == False
+                    new_fact_or_rule.asserted = False
             else:
                 # print("this fact was not asserted")
                 if len(new_fact_or_rule.supported_by) == 0:
@@ -178,16 +179,16 @@ class KnowledgeBase(object):
                                 supportedRule2.supported_by.remove(pair)
                                 self.kb_retract(supportedRule2)
                     self.facts.remove(new_fact_or_rule)
-                else:
-                    print("haha suckers")
         else:
             if new_fact_or_rule.asserted == True:
-                print("this rule was asserted")
+                pass
             else:
+                # print(new_fact_or_rule)
                 if len(new_fact_or_rule.supported_by) == 0:
                     # print("boo suckers")
                     # print(new_fact_or_rule)
                     for supportedFact3 in new_fact_or_rule.supports_facts:
+                        # print(supportedFact3)
                         for pair in supportedFact3.supported_by:
                             if pair[1] == new_fact_or_rule:
                                 supportedFact3.supported_by.remove(pair)
@@ -239,6 +240,11 @@ class InferenceEngine(object):
                     # print(new_fact.statement)
                     # print("adding fact in []")
                     kb.kb_add(new_fact)
+                else:
+                    new_fact = kb.facts[kb.facts.index(new_fact)]
+                    new_fact.supported_by.append((fact,rule))
+                    fact.supports_rules.append(new_fact)
+                    rule.supports_rules.append(new_fact)
             else:
                 new_rule = Rule([rule.lhs[1:],rule_rhs],[(fact,rule)])
                 if new_rule not in kb.rules:
@@ -246,8 +252,13 @@ class InferenceEngine(object):
                     rule.supports_rules.append(new_rule)
                     # print("adding rule in []")
                     kb.kb_add(new_rule)
+                else:
+                    new_rule = kb.rules[kb.rules.index(new_rule)]
+                    new_rule.supported_by.append((fact,rule))
+                    fact.supports_rules.append(new_rule)
+                    rule.supports_rules.append(new_rule)
 
-        # Rule has bindings instead
+        # Rule has variables instead
         elif new_bindings !=  False:
             if len(rule.lhs) == 1:
                 new_statement = instantiate(rule_rhs,new_bindings)
@@ -258,6 +269,11 @@ class InferenceEngine(object):
                     # print(new_fact.statement)
                     # print("adding fact in not false")
                     kb.kb_add(new_fact)
+                else:
+                    new_fact = kb.facts[kb.facts.index(new_fact)]
+                    new_fact.supported_by.append((fact,rule))
+                    fact.supports_rules.append(new_fact)
+                    rule.supports_rules.append(new_fact)
             else:
                 newRulesArray = []
                 for oldRule in rule.lhs[1:]:
@@ -269,5 +285,10 @@ class InferenceEngine(object):
                     rule.supports_rules.append(new_rule)
                     # print("adding rule in not false")
                     kb.kb_add(new_rule)
+                else:
+                    new_rule = kb.rules[kb.rules.index(new_rule)]
+                    new_rule.supported_by.append((fact,rule))
+                    fact.supports_rules.append(new_rule)
+                    rule.supports_rules.append(new_rule)
         # else:
         #     print("nothing cooking")
